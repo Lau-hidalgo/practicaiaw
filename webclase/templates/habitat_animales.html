@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Animales en Hábitat - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>📍 Animales en el Hábitat: {{ habitat.nombre }}</h2>
+        
+        <div class="info-panel" style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <p><strong>Descripción:</strong> {{ habitat.descripcion or 'Sin descripción' }}</p>
+            {% if habitat.profundidad_min and habitat.profundidad_max %}
+            <p><strong>Profundidad:</strong> {{ habitat.profundidad_min }} - {{ habitat.profundidad_max }} metros</p>
+            {% endif %}
+            {% if habitat.temperatura_media %}
+            <p><strong>Temperatura Media:</strong> {{ "%.1f"|format(habitat.temperatura_media) }}°C</p>
+            {% endif %}
+        </div>
+        
+        {% if animales %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Animal Marino</th>
+                        <th>País/Ubicación</th>
+                        <th>Población Estimada</th>
+                        <th>Estado de Conservación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for animal in animales %}
+                    <tr>
+                        <td><strong>{{ animal.nombre }}</strong></td>
+                        <td>
+                            {% if animal.pais_nombre %}
+                            🌍 {{ animal.pais_nombre }}
+                            {% else %}
+                            <span style="color: #999;">No especificado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ animal.poblacion_estimada or 'N/A' }}</td>
+                        <td>
+                            <span class="badge-{{ animal.estado_conservacion|lower|replace(' ', '-') if animal.estado_conservacion else 'default' }}">
+                                {{ animal.estado_conservacion or 'N/A' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay animales registrados en este hábitat.</p>
+        </div>
+        {% endif %}
+        
+        <div class="form-actions">
+            <a href="/habitats" class="btn btn-primary">⬅️ Volver a Hábitats</a>
+        </div>
+    </div>
+    
+    <style>
+        .badge-abundante { background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-común { background: #17a2b8; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-raro { background: #ffc107; color: black; padding: 5px 10px; border-radius: 5px; }
+        .badge-vulnerable { background: #fd7e14; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-en-peligro { background: #dc3545; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-crítico { background: #721c24; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-default { background: #6c757d; color: white; padding: 5px 10px; border-radius: 5px; }
+    </style>
+{% endblock %}

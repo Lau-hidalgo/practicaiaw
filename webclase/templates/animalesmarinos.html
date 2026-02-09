@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Animales Marinos - ASIR 2º{% endblock %}
+
+{% block page_title %}📋 Lista de Animales Marinos{% endblock %}
+
+{% block content %}
+<h2 style="color: #1e3c72; margin-bottom: 30px; text-align: center;">Animales Marinos Registrados</h2>
+
+{% if animales %}
+<div class="animals-grid">
+    {% for animal in animales %}
+    <div class="animal-card">
+        <div class="animal-avatar">
+            {% if animal.imagen_url %}
+            <img src="{{ animal.imagen_url }}" alt="{{ animal.nombre }}" class="animal-image" 
+                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop';">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop" 
+                 alt="{{ animal.nombre }}" class="animal-image">
+            {% endif %}
+        </div>
+        <div class="animal-name">{{ animal.nombre }}</div>
+        <div class="animal-info">
+            <span class="animal-id">ID: {{ animal.id }}</span>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <a href="/animal/{{ animal.id }}/detalle" class="btn btn-primary" style="font-size: 0.9em; padding: 10px 20px;" title="Ver detalle y comentarios">💬 Ver</a>
+            {% if is_admin %}
+            <a href="/animal/{{ animal.id }}/habitats" class="btn btn-info" style="font-size: 0.9em; padding: 10px 20px;" title="Gestionar Hábitats">🌊</a>
+            <a href="/update_animalesmarinos" class="btn" style="font-size: 0.9em; padding: 10px 20px;">✏️</a>
+            <a href="/borrar_animalesmarinos" class="btn btn-danger" style="font-size: 0.9em; padding: 10px 20px;">🗑️</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="mensaje-error">
+    <h3 style="margin: 0 0 10px 0;">⚠️ No hay animales registrados</h3>
+    <p style="margin: 0;">Aún no hay animales marinos en el sistema. ¡Agrega el primero!</p>
+</div>
+{% endif %}
+
+<div style="margin-top: 40px; text-align: center;">
+    {% if is_admin %}
+    <a href="/insert_animalesmarinos" class="btn btn-success">➕ Agregar Nuevo Animal</a>
+    {% endif %}
+    <a href="/" class="btn" style="margin-left: 15px;">🏠 Volver al Inicio</a>
+</div>
+{% endblock %}

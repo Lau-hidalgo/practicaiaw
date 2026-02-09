@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: webclase_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot
+      MYSQL_DATABASE: webclase
+      MYSQL_USER: webuser
+      MYSQL_PASSWORD: webpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - webclase_network
+
+  # Aplicación FastAPI
+  web:
+    image: lauhidalgo/webclase:latest
+    container_name: webclase_app
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=webuser
+      - DB_PASSWORD=webpass
+      - DB_NAME=webclase
+    networks:
+      - webclase_network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # WatchTower - Actualización automática de contenedores
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true          # Limpia imágenes antiguas
+      - WATCHTOWER_POLL_INTERVAL=60      # Revisa cada 1 minuto (más rápido para pruebas)
+      - WATCHTOWER_LABEL_ENABLE=true     # Solo actualiza contenedores marcados
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_DEBUG=true            # Muestra más información en logs
+    networks:
+      - webclase_network
+
+volumes:
+  mysql_data:
+
+networks:
+  webclase_network:
+    driver: bridge

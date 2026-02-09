@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Todas las Asociaciones - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>🔗 Todas las Asociaciones Animal-Hábitat</h2>
+        
+        <p class="subtitle">Visualiza todas las relaciones entre animales marinos y sus hábitats.</p>
+        
+        {% if asociaciones %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Animal Marino</th>
+                        <th>Hábitat</th>
+                        <th>País/Ubicación</th>
+                        <th>Población Estimada</th>
+                        <th>Estado de Conservación</th>
+                        {% if is_admin %}
+                        <th>Acciones</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asoc in asociaciones %}
+                    <tr>
+                        <td><strong>🐠 {{ asoc.animal_nombre }}</strong></td>
+                        <td><strong>📍 {{ asoc.habitat_nombre }}</strong></td>
+                        <td>
+                            {% if asoc.pais_nombre %}
+                            <span style="font-size: 1.2em;">
+                                {{ asoc.pais_codigo|upper if asoc.pais_codigo else '🌍' }}
+                            </span>
+                            {{ asoc.pais_nombre }}
+                            {% else %}
+                            <span style="color: #999;">No especificado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ asoc.poblacion_estimada or 'N/A' }}</td>
+                        <td>
+                            <span class="badge-{{ asoc.estado_conservacion|lower|replace(' ', '-') if asoc.estado_conservacion else 'default' }}">
+                                {{ asoc.estado_conservacion or 'N/A' }}
+                            </span>
+                        </td>
+                        {% if is_admin %}
+                        <td>
+                            <form method="POST" action="/desasociar_animal_habitat" style="display: inline;"
+                                  onsubmit="return confirm('¿Eliminar esta asociación?');">
+                                <input type="hidden" name="animal_id" value="{{ asoc.animal_id }}">
+                                <input type="hidden" name="habitat_id" value="{{ asoc.habitat_id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="stats-panel" style="margin-top: 30px; background: #f8f9fa; padding: 20px; border-radius: 10px;">
+            <h3>📊 Estadísticas</h3>
+            <p><strong>Total de Asociaciones:</strong> {{ asociaciones|length }}</p>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay asociaciones registradas entre animales y hábitats.</p>
+        </div>
+        {% endif %}
+        
+        <div class="form-actions">
+            <a href="/animalesmarinos" class="btn btn-primary">🐠 Ver Animales</a>
+            <a href="/habitats" class="btn btn-info">📍 Ver Hábitats</a>
+        </div>
+    </div>
+    
+    <style>
+        .badge-abundante { background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-común { background: #17a2b8; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-raro { background: #ffc107; color: black; padding: 5px 10px; border-radius: 5px; }
+        .badge-vulnerable { background: #fd7e14; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-en-peligro { background: #dc3545; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-crítico { background: #721c24; color: white; padding: 5px 10px; border-radius: 5px; }
+        .badge-default { background: #6c757d; color: white; padding: 5px 10px; border-radius: 5px; }
+    </style>
+{% endblock %}

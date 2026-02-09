@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Animal Actualizado - ASIR 2º{% endblock %}
+
+{% block page_title %}✅ Operación Exitosa{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <div class="mensaje-exito">
+        <div style="font-size: 4em; margin-bottom: 20px;">✅</div>
+        <h2 style="margin: 0 0 15px 0; color: #1e8449; font-size: 1.8em;">Animal Actualizado Correctamente</h2>
+        <p style="margin: 0; font-size: 1.1em;">El nombre del animal marino ha sido actualizado exitosamente en la base de datos.</p>
+    </div>
+    
+    <div style="margin-top: 40px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="/animalesmarinos" class="btn">📋 Ver Lista</a>
+        <a href="/update_animalesmarinos" class="btn">✏️ Actualizar Otro</a>
+        <a href="/" class="btn">🏠 Inicio</a>
+    </div>
+</div>
+{% endblock %}

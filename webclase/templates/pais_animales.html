@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Animales en {{ pais.nombre }} - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>🐋 Animales Marinos en {{ pais.nombre }} {{ pais.codigo }}</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            <strong>Continente:</strong> {{ pais.continente }}
+        </p>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="/paises" class="btn btn-secondary">⬅️ Volver a Países</a>
+        </div>
+        
+        {% if animales %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Hábitat</th>
+                        <th>Población Estimada</th>
+                        <th>Estado de Conservación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for animal in animales %}
+                    <tr>
+                        <td>{{ animal.id }}</td>
+                        <td>
+                            {% if animal.imagen_url %}
+                            <img src="{{ animal.imagen_url }}" alt="{{ animal.nombre }}" 
+                                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                            <span style="font-size: 30px;">🐟</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ animal.nombre }}</strong></td>
+                        <td>{{ animal.habitat_nombre }}</td>
+                        <td>
+                            {% if animal.poblacion_estimada %}
+                                {{ "{:,}".format(animal.poblacion_estimada) }}
+                            {% else %}
+                                No disponible
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if animal.estado_conservacion %}
+                                <span class="badge badge-{{ animal.estado_conservacion.lower() }}">
+                                    {{ animal.estado_conservacion }}
+                                </span>
+                            {% else %}
+                                <span class="badge badge-default">No especificado</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay animales marinos registrados en {{ pais.nombre }}.</p>
+            <p>Puedes agregar asociaciones desde la página de cada animal.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-vulnerable {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .badge-peligro {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .badge-estable {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .badge-crítico {
+            background-color: #6f42c1;
+            color: #fff;
+        }
+        .badge-default {
+            background-color: #6c757d;
+            color: #fff;
+        }
+    </style>
+{% endblock %}

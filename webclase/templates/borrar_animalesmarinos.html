@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Borrar Animal Marino - ASIR 2º{% endblock %}
+
+{% block page_title %}🗑️ Borrar Animal Marino{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2>Eliminar Animal Marino</h2>
+    <div style="background: #fff3cd; border: 2px solid #ff9800; padding: 15px; border-radius: 10px; margin: 1rem 0 2rem 0;">
+        <p style="margin: 0; color: #856404; font-weight: 500;">⚠️ Esta acción es irreversible. Selecciona el animal que deseas eliminar.</p>
+    </div>
+    
+    <form method="post" action="/do_borrar_animalesmarinos">
+        <div class="form-group">
+            <label for="id">Selecciona el animal a eliminar:</label>
+            <select id="id" name="id" required>
+                {% for animal in animales %}
+                <option value="{{ animal.id }}">{{ animal.id }} - {{ animal.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este animal marino? Esta acción no se puede deshacer.')">🗑️ Eliminar</button>
+            <a href="/animalesmarinos" class="btn">← Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

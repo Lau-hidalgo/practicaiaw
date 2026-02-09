@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Borrar Hábitats - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>🗑️ Borrar Hábitat</h2>
+        
+        {% if habitats %}
+        <div class="alert alert-warning">
+            <p>⚠️ <strong>Advertencia:</strong> Al borrar un hábitat, también se eliminarán todas las asociaciones con animales marinos.</p>
+        </div>
+        
+        <form method="POST" action="/do_borrar_habitats" class="form-container" 
+              onsubmit="return confirm('¿Estás seguro de que quieres borrar este hábitat?');">
+            <div class="form-group">
+                <label for="id">Selecciona el Hábitat a Borrar:</label>
+                <select id="id" name="id" required class="form-control">
+                    <option value="">-- Selecciona un hábitat --</option>
+                    {% for habitat in habitats %}
+                    <option value="{{ habitat.id }}">
+                        {{ habitat.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">🗑️ Borrar Hábitat</button>
+                <a href="/habitats" class="btn btn-secondary">❌ Cancelar</a>
+            </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay hábitats para borrar.</p>
+        </div>
+        <a href="/habitats" class="btn btn-primary">⬅️ Volver</a>
+        {% endif %}
+    </div>
+{% endblock %}

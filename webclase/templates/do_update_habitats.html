@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Hábitat Actualizado - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="alert alert-success">
+            <h2>✅ Hábitat Actualizado Correctamente</h2>
+            <p>Los cambios han sido guardados en la base de datos.</p>
+        </div>
+        
+        <div class="form-actions">
+            <a href="/habitats" class="btn btn-primary">📋 Ver Lista de Hábitats</a>
+            <a href="/update_habitats" class="btn btn-warning">✏️ Editar Otro Hábitat</a>
+        </div>
+    </div>
+{% endblock %}

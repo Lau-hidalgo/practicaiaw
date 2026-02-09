@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Insertar Animal Marino - ASIR 2º{% endblock %}
+
+{% block page_title %}➕ Insertar Nuevo Animal Marino{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2>Agregar Animal Marino</h2>
+    <p style="margin: 1rem 0 2rem 0; color: #666;">Rellena el formulario para agregar un nuevo animal marino al sistema.</p>
+    
+    <form method="post" action="/do_insertar_animalesmarinos">
+        <div class="form-group">
+            <label for="nombre">Nombre del Animal Marino:</label>
+            <input id="nombre" name="nombre" type="text" required placeholder="Ej: Tiburón Blanco, Delfín, Ballena...">
+        </div>
+        
+        <div class="form-group">
+            <label for="imagen_url">URL de la Imagen (opcional):</label>
+            <input id="imagen_url" name="imagen_url" type="url" placeholder="https://ejemplo.com/imagen.jpg">
+            <small style="color: #666; display: block; margin-top: 5px;">
+                💡 Puedes usar imágenes de:
+                <ul style="margin: 5px 0; padding-left: 20px;">
+                    <li><a href="https://unsplash.com/s/photos/marine-animals" target="_blank">Unsplash</a> - Gratis y sin derechos</li>
+                    <li><a href="https://images.google.com" target="_blank">Google Imágenes</a> - Clic derecho > Copiar dirección de imagen</li>
+                    <li><a href="https://drive.google.com" target="_blank">Google Drive</a> - Compartir > Obtener enlace</li>
+                </ul>
+                Deja vacío para usar imagen por defecto.
+            </small>
+        </div>
+        
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #e9ecef;">
+        <h3 style="margin-bottom: 20px; color: #1e3c72;">🌊 Hábitats (Opcional)</h3>
+        
+        <div class="form-group">
+            <label>Selecciona los hábitats donde vive:</label>
+            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                {% for habitat in habitats %}
+                <label style="display: block; padding: 8px; cursor: pointer;" class="checkbox-label">
+                    <input type="checkbox" name="habitats" value="{{ habitat.id }}" style="margin-right: 8px;">
+                    <strong>{{ habitat.nombre }}</strong> - {{ habitat.descripcion[:50] }}...
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="pais_id">País donde se encuentra (opcional):</label>
+            <select id="pais_id" name="pais_id">
+                <option value="">-- No especificar --</option>
+                {% for continente, paises in paises_por_continente.items() %}
+                <optgroup label="{{ continente }}">
+                    {% for pais in paises %}
+                    <option value="{{ pais.id }}">{{ pais.codigo }} - {{ pais.nombre }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="poblacion">Población estimada (opcional):</label>
+            <input id="poblacion" name="poblacion" type="number" placeholder="Ej: 5000">
+        </div>
+        
+        <div class="form-group">
+            <label for="estado">Estado de conservación (opcional):</label>
+            <select id="estado" name="estado">
+                <option value="">-- No especificar --</option>
+                <option value="Estable">Estable</option>
+                <option value="Vulnerable">Vulnerable</option>
+                <option value="En Peligro">En Peligro</option>
+                <option value="Crítico">Crítico</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+            <button type="submit" class="btn btn-success">💾 Guardar</button>
+            <a href="/animalesmarinos" class="btn">← Cancelar</a>
+        </div>
+        
+        <style>
+        .checkbox-label:hover {
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        </style>
+    </form>
+</div>
+{% endblock %}

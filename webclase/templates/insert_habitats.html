@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Añadir Hábitat - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>➕ Añadir Nuevo Hábitat</h2>
+        
+        <form method="POST" action="/do_insertar_habitats" class="form-container">
+            <div class="form-group">
+                <label for="nombre">Nombre del Hábitat:</label>
+                <input type="text" id="nombre" name="nombre" required class="form-control" 
+                       placeholder="Ej: Arrecife de Coral">
+            </div>
+            
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" class="form-control"
+                          placeholder="Describe las características del hábitat..."></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="profundidad_min">Profundidad Mínima (metros):</label>
+                    <input type="number" id="profundidad_min" name="profundidad_min" 
+                           class="form-control" placeholder="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="profundidad_max">Profundidad Máxima (metros):</label>
+                    <input type="number" id="profundidad_max" name="profundidad_max" 
+                           class="form-control" placeholder="50">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="temperatura_media">Temperatura Media (°C):</label>
+                <input type="number" step="0.1" id="temperatura_media" name="temperatura_media" 
+                       class="form-control" placeholder="25.5">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">💾 Guardar Hábitat</button>
+                <a href="/habitats" class="btn btn-secondary">❌ Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

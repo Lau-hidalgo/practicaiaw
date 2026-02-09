@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Actualizar Animal Marino - ASIR 2º{% endblock %}
+
+{% block page_title %}✏️ Actualizar Animal Marino{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2>Modificar Animal Marino</h2>
+    <p style="margin: 1rem 0 2rem 0; color: #666;">Selecciona el animal que deseas actualizar, modifica su nombre o imagen.</p>
+    
+    <form method="post" action="/do_update_animalesmarinos">
+        <div class="form-group">
+            <label for="id">Selecciona el animal a actualizar:</label>
+            <select id="id" name="id" required onchange="updateAnimalInfo()">
+                <option value="">-- Selecciona un animal --</option>
+                {% for animal in animales %}
+                <option value="{{ animal.id }}" 
+                        data-nombre="{{ animal.nombre }}" 
+                        data-imagen="{{ animal.imagen_url if animal.imagen_url else '' }}">
+                    {{ animal.id }} - {{ animal.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div id="preview-section" style="display: none; text-align: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <p style="margin-bottom: 10px; color: #666; font-weight: bold;">Vista previa actual:</p>
+            <img id="current-image" src="" alt="Animal" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #667eea;">
+            <p id="current-name" style="margin-top: 10px; font-size: 18px; font-weight: bold; color: #1e3c72;"></p>
+        </div>
+        
+        <div class="form-group">
+            <label for="nombre">Nuevo nombre:</label>
+            <input id="nombre" name="nombre" type="text" required placeholder="Ingresa el nuevo nombre del animal">
+        </div>
+        
+        <div class="form-group">
+            <label for="imagen_url">URL de la imagen:</label>
+            <input id="imagen_url" name="imagen_url" type="url" placeholder="https://images.unsplash.com/photo-...">
+            <small style="display: block; margin-top: 5px; color: #666;">
+                💡 Fuentes de imágenes:<br>
+                • <a href="https://unsplash.com" target="_blank" style="color: #667eea;">Unsplash</a> - Gratis sin derechos<br>
+                • <a href="https://images.google.com" target="_blank" style="color: #667eea;">Google Imágenes</a> - Clic derecho > Copiar dirección<br>
+                • <a href="https://drive.google.com" target="_blank" style="color: #667eea;">Google Drive</a> - Compartir imagen<br>
+                Deja en blanco para mantener la imagen actual.
+            </small>
+        </div>
+        
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #e9ecef;">
+        <h3 style="margin-bottom: 20px; color: #1e3c72;">🌊 Hábitats (Opcional)</h3>
+        
+        <div class="form-group">
+            <label>Actualizar hábitats donde vive:</label>
+            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                {% for habitat in habitats %}
+                <label style="display: block; padding: 8px; cursor: pointer;" class="checkbox-label">
+                    <input type="checkbox" name="habitats" value="{{ habitat.id }}" style="margin-right: 8px;">
+                    <strong>{{ habitat.nombre }}</strong> - {{ habitat.descripcion[:50] if habitat.descripcion else 'Sin descripción' }}...
+                </label>
+                {% endfor %}
+            </div>
+            <small style="display: block; margin-top: 5px; color: #666;">
+                ℹ️ Selecciona los hábitats actualizados. Las asociaciones anteriores se reemplazarán.
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="pais_id">País donde se encuentra (opcional):</label>
+            <select id="pais_id" name="pais_id">
+                <option value="">-- No especificar --</option>
+                {% for continente, paises in paises_por_continente.items() %}
+                <optgroup label="{{ continente }}">
+                    {% for pais in paises %}
+                    <option value="{{ pais.id }}">{{ pais.codigo }} - {{ pais.nombre }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="poblacion">Población estimada (opcional):</label>
+            <input id="poblacion" name="poblacion" type="number" placeholder="Ej: 5000">
+        </div>
+        
+        <div class="form-group">
+            <label for="estado">Estado de conservación (opcional):</label>
+            <select id="estado" name="estado">
+                <option value="">-- No especificar --</option>
+                <option value="Estable">Estable</option>
+                <option value="Vulnerable">Vulnerable</option>
+                <option value="En Peligro">En Peligro</option>
+                <option value="Crítico">Crítico</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+            <button type="submit" class="btn">💾 Actualizar</button>
+            <a href="/animalesmarinos" class="btn">← Cancelar</a>
+        </div>
+        
+        <style>
+        .checkbox-label:hover {
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        </style>
+    </form>
+</div>
+
+<script>
+    function updateAnimalInfo() {
+        const select = document.getElementById('id');
+        const selectedOption = select.options[select.selectedIndex];
+        const nombreInput = document.getElementById('nombre');
+        const imagenInput = document.getElementById('imagen_url');
+        const previewSection = document.getElementById('preview-section');
+        const currentImage = document.getElementById('current-image');
+        const currentName = document.getElementById('current-name');
+        
+        if (selectedOption.value) {
+            const nombre = selectedOption.dataset.nombre;
+            const imagen = selectedOption.dataset.imagen;
+            
+            // Rellenar los campos con los valores actuales
+            nombreInput.value = nombre;
+            
+            // Mostrar preview
+            if (imagen) {
+                currentImage.src = imagen;
+                currentImage.style.display = 'block';
+                currentImage.onerror = function() {
+                    this.style.display = 'none';
+                    this.nextElementSibling.textContent = '🐟 ' + nombre;
+                };
+            } else {
+                currentImage.style.display = 'none';
+            }
+            
+            currentName.textContent = nombre;
+            previewSection.style.display = 'block';
+        } else {
+            nombreInput.value = '';
+            imagenInput.value = '';
+            previewSection.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

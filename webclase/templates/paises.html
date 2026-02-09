@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Países - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>🌍 Lista de Países con Fauna Marina</h2>
+        
+        {% if paises %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Continente</th>
+                        <th>Animales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pais in paises %}
+                    <tr>
+                        <td>{{ pais.id }}</td>
+                        <td><strong>{{ pais.codigo }}</strong></td>
+                        <td>{{ pais.nombre }}</td>
+                        <td>
+                            {% if pais.continente == 'África' %}🌍
+                            {% elif pais.continente == 'América' %}🌎
+                            {% elif pais.continente == 'Asia' %}🌏
+                            {% elif pais.continente == 'Europa' %}🇪🇺
+                            {% elif pais.continente == 'Oceanía' %}🌏
+                            {% endif %}
+                            {{ pais.continente }}
+                        </td>
+                        <td>
+                            <a href="/pais/{{ pais.id }}/animales" class="btn btn-info btn-sm">
+                                Ver Animales
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay países registrados en la base de datos.</p>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

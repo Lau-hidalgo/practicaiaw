@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ animal.nombre }} - Detalle - ASIR 2º{% endblock %}
+
+{% block content %}
+<div class="content" style="max-width: 900px; margin: 0 auto;">
+    <!-- Encabezado del Animal -->
+    <div class="animal-header" style="text-align: center; margin-bottom: 40px;">
+        <div class="animal-avatar" style="margin: 0 auto 20px;">
+            {% if animal.imagen_url %}
+            <img src="{{ animal.imagen_url }}" alt="{{ animal.nombre }}" 
+                 style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid #667eea; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
+                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop';">
+            {% else %}
+            <div style="width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 100px;">🐟</div>
+            {% endif %}
+        </div>
+        <h1 style="color: #1e3c72; margin: 0 0 10px 0;">{{ animal.nombre }}</h1>
+        <p style="color: #666; font-size: 1.1em;">ID: {{ animal.id }}</p>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            {% if is_admin %}
+            <a href="/animal/{{ animal.id }}/habitats" class="btn btn-info">🌊 Gestionar Hábitats</a>
+            {% endif %}
+            <a href="/animalesmarinos" class="btn">⬅️ Volver a la Lista</a>
+        </div>
+    </div>
+
+    <!-- Hábitats del Animal -->
+    {% if habitats %}
+    <div class="card" style="margin-bottom: 30px;">
+        <h3 style="color: #1e3c72; margin-bottom: 20px;">🏝️ Hábitats donde vive este animal</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+            {% for habitat in habitats %}
+            <div style="padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; border-left: 5px solid #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 1.3em; margin-bottom: 8px;">🌊</div>
+                <strong style="color: #1e3c72; font-size: 1.1em; display: block; margin-bottom: 10px;">{{ habitat.nombre }}</strong>
+                {% if habitat.pais_nombre %}
+                <p style="margin: 5px 0; color: #555; font-size: 0.95em; display: flex; align-items: center; gap: 5px;">
+                    <span style="font-size: 1.2em;">📍</span>
+                    <strong>País:</strong> {{ habitat.pais_nombre }}
+                </p>
+                {% endif %}
+                {% if habitat.poblacion_estimada %}
+                <p style="margin: 5px 0; color: #555; font-size: 0.95em; display: flex; align-items: center; gap: 5px;">
+                    <span style="font-size: 1.2em;">👥</span>
+                    <strong>Población:</strong> {{ habitat.poblacion_estimada }} individuos
+                </p>
+                {% endif %}
+                {% if habitat.estado_conservacion %}
+                <p style="margin: 5px 0; color: #555; font-size: 0.95em; display: flex; align-items: center; gap: 5px;">
+                    <span style="font-size: 1.2em;">{% if habitat.estado_conservacion == 'En peligro' %}⚠️{% elif habitat.estado_conservacion == 'Vulnerable' %}🟡{% else %}✅{% endif %}</span>
+                    <strong>Estado:</strong> {{ habitat.estado_conservacion }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Sección de Comentarios -->
+    <div class="card">
+        <h2 style="color: #1e3c72; margin-bottom: 20px;">💬 Comentarios ({{ comentarios|length }})</h2>
+        
+        <!-- Formulario para agregar comentario -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+            <h4 style="margin: 0 0 15px 0; color: #1e3c72;">Agregar comentario</h4>
+            <form method="post" action="/animal/{{ animal.id }}/comentario">
+                <div class="form-group">
+                    <textarea name="comentario" required rows="3" placeholder="Escribe tu comentario sobre {{ animal.nombre }}..." 
+                              style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">📝 Publicar Comentario</button>
+            </form>
+        </div>
+
+        <!-- Lista de comentarios -->
+        {% if comentarios %}
+        <div class="comentarios-list">
+            {% for comentario in comentarios %}
+            <div class="comentario-item" style="padding: 20px; border-bottom: 1px solid #e9ecef; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <div>
+                        <strong style="color: #667eea; font-size: 1.1em;">{{ comentario['usuario_nombre'] }}</strong>
+                        <span style="color: #999; font-size: 0.9em; margin-left: 10px;">
+                            {% if comentario['fecha'] %}
+                                {{ comentario['fecha'].strftime('%d/%m/%Y %H:%M') }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if is_admin or (usuario and usuario['username'] == comentario['usuario_nombre']) %}
+                    <form method="post" action="/comentario/{{ comentario['id'] }}/borrar" style="margin: 0;">
+                        <button type="submit" class="btn btn-danger btn-sm" 
+                                onclick="return confirm('¿Seguro que quieres borrar este comentario?')"
+                                style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                    </form>
+                    {% endif %}
+                </div>
+                <p style="margin: 0; color: #333; line-height: 1.6;">{{ comentario['comentario'] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 40px 20px; color: #999;">
+            <p style="font-size: 3em; margin: 0;">💬</p>
+            <p style="margin: 10px 0 0 0;">No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Hábitats - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>📍 Lista de Hábitats Marinos</h2>
+        
+        {% if is_admin %}
+        <div class="admin-actions" style="margin-bottom: 20px;">
+            <a href="/insert_habitats" class="btn btn-primary">➕ Añadir Nuevo Hábitat</a>
+            <a href="/update_habitats" class="btn btn-warning">✏️ Editar Hábitats</a>
+            <a href="/borrar_habitats" class="btn btn-danger">🗑️ Borrar Hábitats</a>
+        </div>
+        {% endif %}
+        
+        {% if habitats %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Profundidad (m)</th>
+                        <th>Temperatura Media (°C)</th>
+                        <th>Animales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for habitat in habitats %}
+                    <tr>
+                        <td>{{ habitat.id }}</td>
+                        <td><strong>{{ habitat.nombre }}</strong></td>
+                        <td>{{ habitat.descripcion or 'Sin descripción' }}</td>
+                        <td>
+                            {% if habitat.profundidad_min and habitat.profundidad_max %}
+                                {{ habitat.profundidad_min }} - {{ habitat.profundidad_max }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if habitat.temperatura_media %}
+                                {{ "%.1f"|format(habitat.temperatura_media) }}°C
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/habitat/{{ habitat.id }}/animales" class="btn btn-info btn-sm">
+                                Ver Animales
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay hábitats registrados en la base de datos.</p>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

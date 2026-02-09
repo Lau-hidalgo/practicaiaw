@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block page_title %}🚫 Acceso Denegado{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center;">
+    <div style="font-size: 100px; margin-bottom: 20px;">🚫</div>
+    
+    <h2 style="color: #dc3545; margin-bottom: 20px;">Acceso Denegado</h2>
+    
+    <div class="mensaje-error">
+        <h3>Error 403 - Forbidden</h3>
+        <p style="font-size: 1.2em; margin: 20px 0;">
+            No tienes permisos para acceder a esta página.
+        </p>
+        <p style="font-size: 1em; color: #666;">
+            Esta funcionalidad está restringida solo para <strong>administradores</strong>.
+        </p>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <p style="margin-bottom: 15px; font-size: 1.1em;">
+            {% if usuario %}
+                Estás conectado como: <strong>{{ usuario.username }}</strong>
+                {% if usuario.rol == 'usuario' %}
+                    <br><span style="color: #666; font-size: 0.9em;">(Usuario sin privilegios de administrador)</span>
+                {% endif %}
+            {% else %}
+                No has iniciado sesión.
+            {% endif %}
+        </p>
+    </div>
+    
+    <div class="button-group" style="margin-top: 30px;">
+        <a href="/animalesmarinos" class="btn-submit" style="text-decoration: none; display: inline-block;">
+            🏠 Volver a Ver Animales
+        </a>
+        
+        {% if not usuario %}
+        <a href="/login" class="btn-submit" style="text-decoration: none; display: inline-block; background: linear-gradient(45deg, #28a745, #20c997);">
+            🔑 Iniciar Sesión
+        </a>
+        {% endif %}
+        
+        {% if usuario %}
+        <a href="/logout" class="btn-submit" style="text-decoration: none; display: inline-block; background: linear-gradient(45deg, #dc3545, #c82333);">
+            🚪 Cerrar Sesión
+        </a>
+        {% endif %}
+    </div>
+    
+    <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+        <h4 style="color: #1e3c72; margin-bottom: 15px;">ℹ️ Información</h4>
+        <p style="color: #666; line-height: 1.6;">
+            Las siguientes funcionalidades están disponibles solo para administradores:
+        </p>
+        <ul style="text-align: left; display: inline-block; margin-top: 10px; color: #666;">
+            <li>➕ Insertar nuevos animales marinos</li>
+            <li>✏️ Actualizar animales existentes</li>
+            <li>🗑️ Borrar animales marinos</li>
+        </ul>
+        <p style="color: #666; margin-top: 15px; font-style: italic;">
+            Como usuario normal, puedes ver la lista de animales marinos.
+        </p>
+    </div>
+</div>
+
+<style>
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-submit {
+        padding: 12px 24px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Asociar Animal con Hábitats - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>🌊 Asociar Animal Marino con Hábitats</h2>
+        
+        <div class="info-panel" style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <h3>Animal Seleccionado: {{ animal.nombre }}</h3>
+        </div>
+        
+        <h3>🏠 Hábitats Actuales</h3>
+        {% if habitats_asociados %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Hábitat</th>
+                        <th>País/Ubicación</th>
+                        <th>Población Estimada</th>
+                        <th>Estado de Conservación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for habitat in habitats_asociados %}
+                    <tr>
+                        <td><strong>{{ habitat.nombre }}</strong></td>
+                        <td>
+                            {% if habitat.pais_nombre %}
+                            🌍 {{ habitat.pais_nombre }}
+                            {% else %}
+                            <span style="color: #999;">No especificado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ habitat.poblacion_estimada or 'N/A' }}</td>
+                        <td>{{ habitat.estado_conservacion or 'N/A' }}</td>
+                        <td>
+                            <form method="POST" action="/desasociar_animal_habitat" style="display: inline;"
+                                  onsubmit="return confirm('¿Eliminar esta asociación?');">
+                                <input type="hidden" name="animal_id" value="{{ animal.id }}">
+                                <input type="hidden" name="habitat_id" value="{{ habitat.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>Este animal aún no está asociado a ningún hábitat.</p>
+        </div>
+        {% endif %}
+        
+        <hr style="margin: 30px 0;">
+        
+        <h3>➕ Añadir Nuevo Hábitat</h3>
+        {% if habitats_disponibles %}
+        <form method="POST" action="/asociar_animal_habitat" class="form-container">
+            <input type="hidden" name="animal_id" value="{{ animal.id }}">
+            
+            <div class="form-group">
+                <label for="habitat_id">Selecciona un Hábitat:</label>
+                <select id="habitat_id" name="habitat_id" required class="form-control">
+                    <option value="">-- Selecciona un hábitat --</option>
+                    {% for habitat in habitats_disponibles %}
+                    <option value="{{ habitat.id }}">{{ habitat.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="poblacion_estimada">Población Estimada:</label>
+                <input type="number" id="poblacion_estimada" name="poblacion_estimada" 
+                       class="form-control" placeholder="Ej: 1000">
+            </div>
+            
+            <div class="form-group">
+                <label for="estado_conservacion">Estado de Conservación:</label>
+                <select id="estado_conservacion" name="estado_conservacion" class="form-control">
+                    <option value="">-- Selecciona --</option>
+                    <option value="Abundante">Abundante</option>
+                    <option value="Común">Común</option>
+                    <option value="Raro">Raro</option>
+                    <option value="Vulnerable">Vulnerable</option>
+                    <option value="En Peligro">En Peligro</option>
+                    <option value="Crítico">Crítico</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pais_id">🌍 País/Ubicación donde se encuentra:</label>
+                <select id="pais_id" name="pais_id" class="form-control">
+                    <option value="">-- Selecciona un país --</option>
+                    {% for continente, paises in paises_por_continente.items() %}
+                    <optgroup label="{{ continente }}">
+                        {% for pais in paises %}
+                        <option value="{{ pais.id }}">{{ pais.nombre }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Indica en qué país se puede encontrar este animal en este hábitat
+                </small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">💾 Asociar Hábitat</button>
+                <a href="/animalesmarinos" class="btn btn-secondary">⬅️ Volver a Animales</a>
+            </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info">
+            <p>No hay más hábitats disponibles para asociar.</p>
+        </div>
+        <a href="/animalesmarinos" class="btn btn-primary">⬅️ Volver a Animales</a>
+        {% endif %}
+    </div>
+{% endblock %}

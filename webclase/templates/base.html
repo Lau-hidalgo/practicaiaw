@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestión de Animales Marinos - ASIR 2º{% endblock %}</title>
+    {% block styles %}{% endblock %}
+    {% block scripts %}{% endblock %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .navigation ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .navigation li {
+            margin: 0;
+        }
+        
+        .navigation a {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .navigation a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .navigation a.active {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            padding: 8px 16px;
+            background: #e9ecef;
+            border-radius: 20px;
+            font-weight: 500;
+            color: #1e3c72;
+        }
+
+        .admin-badge {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+        
+        .content-area {
+            padding: 40px;
+            min-height: 400px;
+        }
+        
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .animal-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .animal-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .animal-card:hover {
+            transform: translateY(-10px);
+            border-color: #667eea;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .animal-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            margin: 0 auto 20px;
+            font-weight: bold;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .animal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .animal-card:hover .animal-image {
+            transform: scale(1.1);
+        }
+        
+        .animal-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e3c72;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .animal-info {
+            color: #666;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .animal-id {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #34c759, #30d158);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #ff3b30, #ff453a);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+        }
+        
+        .mensaje-exito {
+            background: linear-gradient(135deg, #d5f4e6, #a8e6cf);
+            border: 2px solid #34c759;
+            color: #1e8449;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .mensaje-exito h2 {
+            margin: 0 0 10px 0;
+            color: #1e8449;
+        }
+        
+        .mensaje-error {
+            background: linear-gradient(135deg, #fadbd8, #f1948a);
+            border: 2px solid #ff3b30;
+            color: #c0392b;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        /* Estilos para tablas */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .styled-table thead tr {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            color: white;
+            text-align: left;
+        }
+        
+        .styled-table th,
+        .styled-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .styled-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .styled-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Estilos para botones adicionales */
+        .btn-warning {
+            background: linear-gradient(45deg, #ff9500, #ff9f0a);
+        }
+        
+        .btn-info {
+            background: linear-gradient(45deg, #007aff, #0a84ff);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #8e8e93, #aeaeb2);
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        /* Estilos para formularios mejorados */
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+            resize: vertical;
+        }
+        
+        .form-group textarea:focus {
+            border-color: #667eea;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        /* Estilos para alertas */
+        .alert {
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d5f4e6, #a8e6cf);
+            border: 2px solid #34c759;
+            color: #1e8449;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #d6eaf8, #aed6f1);
+            border: 2px solid #007aff;
+            color: #1f618d;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fef5e7, #fce8b2);
+            border: 2px solid #ff9500;
+            color: #9a6e00;
+        }
+        
+        /* Panel informativo */
+        .info-panel {
+            background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #007aff;
+            margin: 20px 0;
+        }
+        
+        .info-panel h3 {
+            margin-top: 0;
+            color: #1e3c72;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        
+        .content h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+        
+        .content h3 {
+            color: #2a5298;
+            margin: 25px 0 15px 0;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stats-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .stats-panel h3 {
+            margin-top: 0;
+        }
+        
+        .footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .navigation ul {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .navigation a {
+                text-align: center;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .animals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{% block page_title %}🐠 Gestión de Animales Marinos{% endblock %}</h1>
+            <p class="subtitle">Laura García Hidalgo</p>
+        </div>
+
+        <nav class="navigation">
+            <ul>
+                {% if usuario %}
+                <li><a href="/">🏠 Inicio</a></li>
+                <li><a href="/animalesmarinos">🐋 Animales</a></li>
+                <li><a href="/habitats">📍 Hábitats</a></li>
+                <li><a href="/paises">🌍 Países</a></li>
+                <li><a href="/asociaciones">🔗 Asociaciones</a></li>
+                {% if is_admin %}
+                <li><a href="/insert_animalesmarinos">➕ Nuevo Animal</a></li>
+                <li><a href="/insert_habitats">➕ Nuevo Hábitat</a></li>
+                {% endif %}
+                {% endif %}
+            </ul>
+            
+            <div class="user-section">
+                {% if usuario %}
+                    <span class="user-info">
+                        👤 {{ usuario.username }}
+                        {% if is_admin %}
+                        <span class="admin-badge">ADMIN</span>
+                        {% endif %}
+                    </span>
+                    <a href="/logout">🚪 Salir</a>
+                {% else %}
+                    <a href="/login">🔑 Iniciar Sesión</a>
+                    <a href="/registro">📝 Registrarse</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Gestión de Animales Marinos - ASIR 2º</p>
+            {% block footer %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

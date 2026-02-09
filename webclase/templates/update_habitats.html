@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Hábitats - ASIR 2º{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>✏️ Editar Hábitats</h2>
+        
+        {% if habitats %}
+        <form method="POST" action="/do_update_habitats" class="form-container">
+            <div class="form-group">
+                <label for="id">Selecciona el Hábitat a Editar:</label>
+                <select id="id" name="id" required class="form-control" onchange="loadHabitatData(this)">
+                    <option value="">-- Selecciona un hábitat --</option>
+                    {% for habitat in habitats %}
+                    <option value="{{ habitat.id }}" 
+                            data-nombre="{{ habitat.nombre }}"
+                            data-descripcion="{{ habitat.descripcion or '' }}"
+                            data-prof-min="{{ habitat.profundidad_min or '' }}"
+                            data-prof-max="{{ habitat.profundidad_max or '' }}"
+                            data-temp="{{ habitat.temperatura_media or '' }}">
+                        {{ habitat.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre">Nuevo Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" class="form-control"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="profundidad_min">Profundidad Mínima (m):</label>
+                    <input type="number" id="profundidad_min" name="profundidad_min" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="profundidad_max">Profundidad Máxima (m):</label>
+                    <input type="number" id="profundidad_max" name="profundidad_max" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="temperatura_media">Temperatura Media (°C):</label>
+                <input type="number" step="0.1" id="temperatura_media" name="temperatura_media" class="form-control">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-warning">💾 Actualizar Hábitat</button>
+                <a href="/habitats" class="btn btn-secondary">❌ Cancelar</a>
+            </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info">
+            <p>⚠️ No hay hábitats para editar.</p>
+        </div>
+        <a href="/habitats" class="btn btn-primary">⬅️ Volver</a>
+        {% endif %}
+    </div>
+    
+    <script>
+        function loadHabitatData(select) {
+            const option = select.options[select.selectedIndex];
+            if (option.value) {
+                document.getElementById('nombre').value = option.dataset.nombre;
+                document.getElementById('descripcion').value = option.dataset.descripcion;
+                document.getElementById('profundidad_min').value = option.dataset.profMin;
+                document.getElementById('profundidad_max').value = option.dataset.profMax;
+                document.getElementById('temperatura_media').value = option.dataset.temp;
+            }
+        }
+    </script>
+{% endblock %}
